@@ -1,5 +1,6 @@
 package com.dylanvann.fastimage;
 
+import android.util.Log;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.model.GlideUrl;
@@ -31,6 +32,7 @@ class FastImageViewManager extends SimpleViewManager<FastImageViewWithUrl> imple
     private static final String REACT_ON_PROGRESS_EVENT = "onFastImageProgress";
     private static final Map<String, List<FastImageViewWithUrl>> VIEWS_FOR_URLS = new WeakHashMap<>();
     private RequestManager requestManager = null;
+    public static String TAG = "RNFastImage";
 
     @Override
     public String getName() {
@@ -100,7 +102,12 @@ class FastImageViewManager extends SimpleViewManager<FastImageViewWithUrl> imple
     @Override
     public void onDropViewInstance(FastImageViewWithUrl view) {
         // This will cancel existing requests.
-        requestManager.clear(view);
+        try {
+            requestManager.clear(view);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Error while Dopping view Instance: " + view.getTag(), e);
+        }
+
         if (view.glideUrl == null) {
             super.onDropViewInstance(view);
             return;
